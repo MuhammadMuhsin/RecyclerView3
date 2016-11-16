@@ -49,29 +49,23 @@ public class InputActivity extends AppCompatActivity {
                         doSave();
                     }
                 });
-    }
 
-    private void pickPhoto() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        hotel = (Hotel) getIntent().getSerializableExtra(MainActivity.HOTEL);
+        if (hotel != null) {
+            setTitle("Edit " + hotel.judul);
+            fillData();
         } else {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            setTitle("New Hotel");
         }
-        intent.setType("image/*");
-        if (intent.resolveActivity(getPackageManager()) != null)
-            startActivityForResult(intent, REQUEST_IMAGE_GET);
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_GET && requestCode == RESULT_OK) {
-            uriFoto = data.getData();
-            ivFoto.setImageURI(uriFoto);
-        }
+    private void fillData() {
+        etJudul.setText(hotel.judul);
+        etDeskripsi.setText(hotel.deskripsi);
+        etDetail.setText(hotel.detail);
+        etLokasi.setText(hotel.lokasi);
+        uriFoto = Uri.parse(hotel.foto);
+        ivFoto.setImageURI(uriFoto);
     }
 
     private void doSave() {
@@ -119,6 +113,28 @@ public class InputActivity extends AppCompatActivity {
     private void setErrorEmpty(EditText editText) {
         editText.setError(((TextInputLayout) editText.getParent().getParent())
                 .getHint() + "Belum Diisi");
+    }
+
+    private void pickPhoto() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
+        intent.setType("image/*");
+        if (intent.resolveActivity(getPackageManager()) != null)
+            startActivityForResult(intent, REQUEST_IMAGE_GET);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_GET && requestCode == RESULT_OK) {
+            uriFoto = data.getData();
+            ivFoto.setImageURI(uriFoto);
+        }
     }
 
 
